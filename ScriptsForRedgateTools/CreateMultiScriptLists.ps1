@@ -5,7 +5,7 @@
     Author:     josh smith
     Created:    2021-11-14
 #>
-Function Out-MultiScripImportFile ([Object]$ServersList, [Object]$ServerGroup,
+Function Out-MultiScriptImportFile ([Object]$ServersList, [Object]$ServerGroup,
     [string]$ExportPath, [Int16]$GroupType) {
 
     switch ($GroupType) {
@@ -84,18 +84,6 @@ Version:1.4.16.1316-->
 $RegServer = $null
 $ExportFolder = 'C:\Temp\'
 
-<# 
-    Eventually we could overwrite the application data file (but not today):
-    Find the application.dat file for MultiScript in the AppData folder 
-    (should be somewhere in 'Roaming\') 
-
-
-$RGFolder = $env:LOCALAPPDATA.Substring(0, $env:LOCALAPPDATA.Length - 5) + 'Roaming'
-$RGFolder = (Get-ChildItem -Path $RGFolder -Filter 'Red Gate').FullName
-$RGFolder = (Get-ChildItem -Path $RGFolder.FullName -Filter '*Multi*').FullName
-$MultiScriptData = (Get-ChildItem -Path  $RGFolder -Include '*.dat' -Recurse).FullName
-#>
-
 $SQLServersList = Get-DBARegServer -SqlInstance $RegServer -IncludeSelf
 
 # iterate through all the returned sources and create lists:
@@ -105,21 +93,15 @@ $Groups = $SQLServersList | Select-Object -Property Group -Unique
 foreach ($s in $sources) {
     if ($null -ne $s) {
 
-        Out-MultiScripImportFile $SQLServersList $s $ExportFolder 1
+        Out-MultiScriptImportFile $SQLServersList $s $ExportFolder 1
     }
 }
 
 foreach ($g in $Groups) {
     if ($null -eq $g) {
         
-        Out-MultiScripImportFile $SQLServersList $g $ExportFolder 2
+        Out-MultiScriptImportFile $SQLServersList $g $ExportFolder 2
     }
 }
 
-Out-MultiScripImportFile $SQLServersList $null $ExportFolder 3
-
-
-
-
-    
-
+Out-MultiScriptImportFile $SQLServersList $null $ExportFolder 3
